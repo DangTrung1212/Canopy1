@@ -9,7 +9,7 @@
     <section class="border-top section products-section">
       <div class="container">
         <h2 class="section-heading">{{ section.settings.recommendations_title }}</h2>
-        <div class="product-grid row grid one-row" data-normheights=".image" data-normheights-inner="img">
+        <div class="product-grid bss-custom-slide row grid one-row" data-normheights=".image" data-normheights-inner="img">
           {%- for product in recommendations.products -%}
             {% render 'product-block', product: product, max_cols: section.settings.products_per_row %}
           {%- endfor -%}

@@ -1,0 +1,272 @@
+{% if end_date != blank %}
+<div class='container1'>
+  <div class='section2'>
+  {% if bar_title != blank %}
+    <p class='section2__text'>{{ bar_title }}</p>
+  {% endif %}
+    <div class='section2__progressBarContainer'>
+      <div class='section2__progressBar'>
+        <div class='section2__progressBarRect'>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="timer">
+  {% if title != blank %}
+    <h4 class="timer__title">{{ title }}</h4>
+  {% endif %}
+  <div class="timer-display">
+    <div class="timer-block">
+      <span class="timer-block__num js-timer-days">00</span>
+      <span class="timer-block__unit">D</span>
+    </div>
+    <!-- code by websensepro.com -->
+    <div class="timer-block">
+      <span class="timer-block__num js-timer-hours">00</span>
+      <span class="timer-block__unit">H</span>
+    </div>
+    <div class="timer-block">
+      <span class="timer-block__num js-timer-minutes">00</span>
+      <span class="timer-block__unit">M</span>
+    </div>
+    <div class="timer-block">
+      <span class="timer-block__num js-timer-seconds">00</span>
+      <span class="timer-block__unit">S</span>
+    </div>
+  </div>
+</div>
+<style>
+/* styles for timer */
+  .timer {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px
+  }
+  .timer--expired {
+    display: none;
+  }
+  .timer__title {
+    text-align: center;
+    color:gray;
+    font-weight: 500;
+    font-size: 13px;
+    text-decoration: underline;
+    margin: 0px;
+  }
+  .timer-display {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    margin-top: 5px;
+    gap: 5px;
+    width: 50%;
+  }
+  .timer-block {
+    display: flex;
+    background-color: black;
+    color: white;
+    position: relative;
+    width: 25%;
+    padding: 5px 0px;
+    border-radius: 5px;
+    align-items: baseline;
+    justify-content: center;
+  }
+  .timer-block__num, 
+  .timer-block__unit {
+    font-weight: 700;
+  }
+  .timer-block__num {
+    font-size: 20xp;
+  }
+  .timer-block__unit {
+    font-size: 10px;
+  }
+  
+  @keyframes progressLineTransmission {
+    from {
+        width: 4%;
+    }
+
+    to {
+        width: 21.5%;
+    }
+}
+
+/* section2 - start */
+.section2 {
+    min-width: 250px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.section2__text {
+    color: red;
+    margin: 0px;
+}
+
+.section2__text--bold {
+    font-weight: 500;
+}
+
+.section2__progressBarContainer {
+    margin-top: 5px;
+    position: relative;
+}
+
+.section2__progressBar {
+    background-color: lightgray;
+    width: 60%;
+    height: 6px;
+    padding: 2px;
+    border-radius: 50px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.section2__progressBarRect {
+    background-image: linear-gradient(90deg, hsl(6, 100%, 80%) 0%, hsl(335, 100%, 65%) 100%);
+    height: 100%;
+    padding: 2px;
+    border-radius: inherit;
+    animation: progressLineTransmission 2.5s 0.3s ease-in-out both;
+
+
+    /* flex */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.section2__progressBarCircle {
+    background-color: hsl(0, 0%, 100%);
+    height: calc(14px - 4px);
+    width: calc(14px - 4px);
+    border-radius: 50%;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.section2__storageLeft {
+    background-color: hsl(0, 0%, 100%);
+    width: fit-content;
+    padding: 20px;
+    border-radius: 8px 8px 0px;
+    
+    /* flex */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* position */
+    position: absolute;
+    top: 0;
+    right: 30px;
+    transform: translateY(-70%);
+
+}
+
+.section2__storageLeft::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border: solid 20px;
+    border-color: transparent hsl(0, 0%, 100%) transparent transparent;
+
+    /* position */
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translateY(50%);
+
+}
+
+.section2__storageLeftDigits {
+    color: hsl(229, 57%, 11%);
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.section2__storageLeftText {
+    color:  hsl(229, 7%, 55%);
+    margin-left: 7px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+/* section2 - end */
+.container1 {
+    margin-bottom: 20px
+}
+
+/* media queries - start */
+@media (max-width: 861px) {
+    @keyframes progressLineTransmission {
+        from {
+            width: 6%;
+        }
+    
+        to {
+            width: 20%;
+        }
+    }
+
+    .container1 {
+        width: auto;
+        height: auto;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px
+    }
+    .section2 {
+        width: 100%;
+        min-width: unset;
+        padding: 30px 30px 70px 30px;
+        margin-top: 15px;
+    }
+
+    .section2__storageLeft {
+        padding: 20px;
+        border-radius: 8px;
+
+        /* position */
+        right: unset;
+        left: 50%;
+        top: unset;
+        bottom: 0;
+        transform: translate(-50%, 50%);
+    }
+    
+    .section2__storageLeft::before {
+        content: none;
+    }
+}
+
+@media (max-width: 381px) {
+    .container1 {
+        transform: scale(0.8);
+    }
+}
+</style>
+<script type="text/javascript">
+  var second = 1000,
+      minute = second * 60,
+      hour = minute * 60,
+      day = hour * 24;
+  var countDown = new Date('{{- end_date -}}').getTime(),
+      x = setInterval(function() {
+      var now = new Date().getTime(),
+          distance = countDown - now;
+      document.querySelector('.js-timer-days').innerText = Math.floor(distance / (day)),
+        document.querySelector('.js-timer-hours').innerText = Math.floor((distance % (day)) / (hour)),
+      document.querySelector('.js-timer-minutes').innerText = Math.floor((distance % (hour)) / (minute)),
+      document.querySelector('.js-timer-seconds').innerText = Math.floor((distance % (minute)) / second);
+    }, second)
+</script>
+{% endif %}

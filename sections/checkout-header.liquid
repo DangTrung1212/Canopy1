@@ -1,0 +1,257 @@
+{%- liquid
+  assign align_search_left = false
+  assign align_search_center = false
+
+  if section.settings.logo_location == 'toolbar' and section.settings.header_layout == 'center' and section.settings.search_bar contains "input"
+    assign align_search_left = true
+  elsif section.settings.logo_location != 'toolbar' and section.settings.search_bar contains "input"
+    assign align_search_left = true
+  endif
+
+  if section.settings.logo_location == 'toolbar' and section.settings.header_layout == 'left' and section.settings.search_bar contains "input"
+    assign align_search_center = true
+  endif
+
+  if search
+    assign search_terms = search.terms | escape
+  endif 
+-%}
+
+{%- style -%}
+  {%- if section.settings.logo != blank -%}
+  .logo img {
+		width: {{ section.settings.mobile_logo_width }}px;
+  }
+
+  @media (min-width: 768px) {
+		.logo img {
+				width: {{ section.settings.logo_width }}px;
+		}
+  }
+  {%- endif -%}
+
+	{%- if section.settings.sticky_header -%}
+		.section-header {
+			 position: -webkit-sticky;
+			 position: sticky;
+			 top: 0;
+		}
+	{%- endif -%}
+
+  .bss__secure-checkout {
+    color: #ffffff;
+    margin-left: 3rem;
+  }
+  /* BSS Custom */
+  .toolbar {
+    justify-content: space-between;
+    padding: 0;
+  }
+  .bss__secure-checkout {
+    margin-left: 0;
+  }
+  .logo img {
+    transform: translateY(4px);
+    max-width: 150px;
+    width: auto;
+    scale: 0.7;
+  }
+  .wrap {
+    padding: 0;
+  }
+  @media (max-width: 768px) {
+    .wrap {
+      padding: 0 5%;
+    }
+  }
+  /* BSS Custom */
+{%- endstyle-%}
+
+
+  {% capture logo_html %}
+    <div class="logo align-{% if section.settings.header_layout == 'left' %}left{% else %}center{% endif %}">
+      <meta itemprop="name" content="{{ shop.name }}">
+      {% if section.settings.logo != blank %}
+        {% capture img_size %}{{ section.settings.logo_width | times: 2 }}x{% endcapture %}
+        <a href="{{ routes.root_url }}" itemprop="url">
+          <img src="{{ section.settings.logo | img_url: img_size }}" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}"
+               {% if section.settings.compact_logo %}class="logo-desktop"{% endif %}
+               alt="{{ section.settings.logo.alt | escape }}" itemprop="logo"/>
+        </a>
+      {% else %}
+        <a href="{{ routes.root_url }}" class="logo-text" itemprop="url">{{ shop.name }}</a>
+      {% endif %}
+    </div>
+  {% endcapture %}
+
+  <div class="header-container" data-section-type="header" itemscope itemtype="http://schema.org/Organization" data-cc-animate data-is-sticky="{{ section.settings.sticky_header }}">
+    {%- assign featured_links = section.settings.nav_featured_link | split: ', ' -%}
+    <div class="page-header {% if section.settings.logo_location == "links" %}layout-nav{% else %}layout-{{ section.settings.header_layout }}{% endif %} using-compact-mobile-logo">
+      <div class="toolbar-container" style="background-color: {{ section.settings.toolbar_background }}">
+        <div class="container">
+          <div id="toolbar" class="toolbar cf
+        	{% if section.settings.header_layout == 'center' %}toolbar--three-cols-xs{% else %}toolbar--two-cols-xs{% endif %}
+					{% if section.settings.logo_location == 'toolbar' and section.settings.header_layout == 'center' %}toolbar--three-cols{% else %}toolbar--two-cols{% endif %}
+			    {% if section.settings.search_text_box_large and section.settings.search_bar != "icon" %}toolbar--text-box-large{% endif %}">
+
+            <div class="toolbar-left {% if section.settings.logo == blank %}toolbar--text-logo{% endif %}
+						{% if align_search_left %}toolbar-left--search-left{% endif %}">
+              <div class="mobile-toolbar">
+                
+              </div>
+
+              {%- if section.settings.header_layout == 'left' -%}
+                {%- if section.settings.logo_location == 'toolbar' -%}
+                  <div class="toolbar-logo">
+                    {{ logo_html }}
+                  </div>
+                {%- else -%}
+                  <div class="toolbar-logo mobile-only">
+                    {{ logo_html }}
+                  </div>
+                {%- endif -%}
+              {%- endif -%}
+
+            </div>
+
+            {% if section.settings.header_layout == 'center' %}
+              <div class="toolbar-center {% if section.settings.logo == blank %}toolbar--text-logo{% endif %}">
+                {% if section.settings.logo_location == 'toolbar' %}
+                  <div class="toolbar-logo {% if section.settings.logo_width > 115 %}toolbar-logo--large{% endif %}">
+                    {{ logo_html }}
+                  </div>
+                {%- else -%}
+                  <div class="toolbar-logo mobile-only">
+                    {{ logo_html }}
+                  </div>
+                {%- endif -%}
+              </div>
+            {% endif %}
+  
+            <div class="bss__secure-checkout">
+              
+              <span>Secure checkout</span>
+            </div>
+  
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+{% schema %}
+  {
+	"name": "Header",
+	"class": "section-header",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "checkbox",
+			"id": "sticky_header",
+			"label": "Enable sticky header",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "social_links_mob",
+			"label": "Show social media links on mobile",
+			"default": true,
+			"info": "The setting for social media links on desktop can be found in the Announcement Bar settings."
+		},
+		{
+			"type": "header",
+			"content": "Logo"
+		},
+		{
+			"type": "image_picker",
+			"id": "logo",
+			"label": "Desktop logo",
+			"info": "300 x 200px recommended"
+		},
+		{
+			"type": "image_picker",
+			"id": "compact_logo",
+			"label": "Mobile logo"
+		},
+		{
+			"type": "range",
+			"id": "logo_width",
+			"min": 50,
+			"max": 250,
+			"step": 5,
+			"label": "Desktop logo width",
+			"default": 140,
+			"unit": "px"
+		},
+		{
+			"type": "range",
+			"id": "mobile_logo_width",
+			"min": 30,
+			"max": 170,
+			"step": 5,
+			"label": "Mobile logo width",
+			"default": 85,
+			"unit": "px"
+		},
+		{
+			"type": "select",
+			"id": "logo_location",
+			"label": "Logo location",
+			"options": [{
+					"value": "toolbar",
+					"label": "Toolbar"
+				},
+				{
+					"value": "links",
+					"label": "Menu links"
+				}
+			],
+			"default": "toolbar"
+		},
+		{
+			"type": "select",
+			"id": "header_layout",
+			"label": "Logo alignment",
+			"options": [{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "left",
+					"label": "Left"
+				}
+			],
+			"default": "left"
+		},
+		{
+			"type": "color",
+			"id": "toolbar_background",
+			"label": "Toolbar background",
+			"default": "#12283E"
+		},
+		{
+			"type": "select",
+			"id": "mobile_parent_text_tap",
+			"label": "On mobile, tapping the link text of menu items with sub menus will",
+			"options": [{
+					"value": "page",
+					"label": "Go to the page"
+				},
+				{
+					"value": "drilldown",
+					"label": "Open the sub menu"
+				}
+			],
+			"default": "drilldown"
+		}
+	],
+	"blocks": []
+}
+{% endschema %}
+
+{% javascript %}
+{% endjavascript %}

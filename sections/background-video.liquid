@@ -30,37 +30,20 @@
   {% endstyle %}
 
   {% unless section.settings.full_width %}<div class="container">{% endunless %}
-  {% if section.settings.video_shopify != blank or section.settings.video_external != blank %}
     <div class="height--fixed video-container video-container--background lazyload--placeholder
       {% if section.settings.placeholder_image == blank and section.settings.image_overlay_style == "shadow" %}has-tint--shadow-in{% endif %}
       {% if section.settings.image_overlay_style != "none" %}has-tint has-tint--{{ section.settings.image_overlay_style }}{% else %}no-tint{% endif %}"
-
-      {% if section.settings.video_shopify != blank %}
-        data-video-sources="{%- for source in section.settings.video_shopify.sources -%}
-          {{ source.format }} {{ source.mime_type }} {{ source.url }}
-          {%- unless forloop.last -%}|{%- endunless -%}
-        {%- endfor -%}"
-        data-video-type="mp4"
-      {% elsif section.settings.video_external != blank %}
-        data-video-url="{{ section.settings.video_external | escape }}"
-      {% endif %}
       data-cc-animate
+      data-video-url="{%- if section.settings.video == blank -%}https://www.youtube.com/watch?v=_9VUPq3SxOc{%- else -%}{{ section.settings.video | escape }}{%- endif -%}"
       data-video-autoplay="true"
       data-video-loop="true">
 
-      {%- liquid
-        if section.settings.placeholder_image
-          assign placeholder_image = section.settings.placeholder_image
-        elsif section.settings.video_shopify
-          assign placeholder_image = section.settings.video_shopify.preview_image
-        endif
-      -%}
-      {% if placeholder_image %}
-        {% assign img_url = placeholder_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
-        <div class="video-container__fallback rimage-outer-wrapper rimage-background" data-lazy-bg="{{ img_url }}" style="background-position: {{ placeholder_image.presentation.focal_point }}">
+      {% if section.settings.placeholder_image %}
+        {% assign img_url = section.settings.placeholder_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+        <div class="video-container__fallback rimage-outer-wrapper rimage-background" data-lazy-bg="{{ img_url }}">
           <noscript>
-            <div class="rimage-wrapper" style="padding-top:{{ 1 | divided_by: placeholder_image.aspect_ratio | times: 100 }}%">
-              <img src="{{ placeholder_image | img_url: '1024x1024' }}" alt="{{ placeholder_image.alt | escape }}" class="rimage__image">
+            <div class="rimage-wrapper" style="padding-top:{{ 1 | divided_by: section.settings.placeholder_image.aspect_ratio | times: 100 }}%">
+              <img src="{{ section.settings.placeholder_image | img_url: '1024x1024' }}" alt="{{ section.settings.placeholder_image.alt | escape }}" class="rimage__image">
             </div>
           </noscript>
         </div>
@@ -117,7 +100,6 @@
       {%- endif -%}
     </div>
   {% unless section.settings.full_width %}</div>{% endunless %}
-  {% endif %}
 </div>
 
 
@@ -134,23 +116,17 @@
         "content": "Video"
       },
       {
-        "id": "video_shopify",
-        "type": "video",
-        "label": "Video upload",
-        "info": "Hosted by Shopify. Replaces External video if both are set."
-      },
-      {
-        "id": "video_external",
+        "id": "video",
         "type": "text",
-        "label": "External video",
-        "info": "Supports YouTube and Vimeo.",
+        "label": "Video link",
+        "info": "Supports mp4, YouTube and Vimeo.",
         "default": "https:\/\/www.youtube.com\/watch?v=_9VUPq3SxOc"
       },
       {
         "id": "placeholder_image",
         "type": "image_picker",
-        "label": "Custom placeholder image",
-        "info": "Required for External videos. Shows while the video is loading, or if it cannot autoplay."
+        "label": "Placeholder image",
+        "info": "Required. Shows while the video is loading, or if it cannot autoplay."
       },
       {
         "type": "header",
@@ -341,7 +317,7 @@
       {
         "name": "Background video",
         "settings": {
-          "video_external": "https:\/\/www.youtube.com\/watch?v=_9VUPq3SxOc"
+          "video": "https:\/\/www.youtube.com\/watch?v=_9VUPq3SxOc"
         }
       }
     ]

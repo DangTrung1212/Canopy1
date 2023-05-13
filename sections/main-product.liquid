@@ -122,18 +122,6 @@
                       -%}
                       <span class="brand">{{ product.vendor | link_to: vendor_url }}</span>
                     {% endif %}
-
-                    {% if block.settings.prod_show_type and product.type != blank %}
-                      {% if block.settings.prod_show_brand %}/{% endif %}
-
-                      {%- assign product_type_handle = product.type | handle -%}
-                      {%- if collections[product_type_handle].handle == product_type_handle -%}
-                        {%- assign type_url = collections[product_type_handle].url -%}
-                      {%- else -%}
-                        {%- assign type_url = product.type | url_for_type -%}
-                      {%- endif -%}
-                      <span class="type">{{ product.type | link_to: type_url }}</span>
-                    {% endif %}
                   </div>
                 {% endif %}
 
@@ -147,7 +135,18 @@
               <{{ heading_tag }} class="product-title product-detail__gap-sm" {{ block.shopify_attributes }}>
                 {{ product.title }}
               </{{ heading_tag }}>
-
+            <div class="brand-and-type feature-col product-detail__gap-sm" {{ block.shopify_attributes }}>
+              {% if block.settings.prod_show_type or product.type != blank %}
+                {%- assign product_type_handle = product.type | handle -%}
+                {%- if collections[product_type_handle].handle == product_type_handle -%}
+                  {%- assign type_url = collections[product_type_handle].url -%}
+                {%- else -%}
+                  {%- assign type_url = product.type | url_for_type -%}
+                {%- endif -%}
+                {%- assign current_variant = product.selected_or_first_available_variant -%}
+                <span class="type" style="text-decoration:underline; text-transform: uppercase; color: #12283E; margin-right: 10px">{{ product.type | link_to: type_url }}</span><span>SKU {{ current_variant.sku }}</span>
+              {% endif %}
+            </div>
             {%- when 'weight' -%}
               {% if current_variant.weight != blank and current_variant.weight > 0 %}
                 <div class="product-weight product-detail__gap-sm {% if current_variant.weight == blank or current_variant.weight <= 0 %}product-weight--no-weight{% endif %}" {{ block.shopify_attributes }}>
@@ -165,6 +164,9 @@
 
                 {% render 'unit-price', variant: current_variant %}
               </div>
+              {% if block.settings.countdown_timer %}
+                {% render "countdown", title: block.settings.countdown_title , end_date: block.settings.end_date, bar_title: block.settings.bar_title %}
+              {% endif %}
               {%- form 'product', product, id: product_form_installments_id -%}
                 <input type="hidden" name="id" value="{% if current_variant %}{{ current_variant.id }}{% endif %}">
                 {{ form | payment_terms }}
@@ -213,7 +215,7 @@
                   -%}
 
                   <div class="product-detail-accordion" data-show-in-quickbuy="{{ block.settings.show_in_quickbuy }}">
-                    {% render 'accordion', allow_multi_open: true, add_content_class: 'rte', first_item_open: description_is_open, item1_title: description_title, item1_content: product.description %}
+                    {% render 'accordion', allow_multi_open: true, add_content_class: 'rte', first_item_open: description_is_open, item1_title: "DESCRIPTION", item1_content: product.description, item2_title: "RETURN POLICY", item2_content: section.settings.return_policy, item3_title: "TERM & CONDITIONS", item3_content: section.settings.return_policy %}
                   </div>
                 {% else %}
                   <div class="product-description rte product-detail__gap-lg"
@@ -285,13 +287,33 @@
                         {%- if uses_swatches and settings.swatch_method == 'image' -%}<span class="variant-swatch-value">: {{ option.selected_value }}</span>{%- endif -%}
                       {% endif %}
 
-                      <select id="option-{{ option.name | handle }}">
+                      <select class="bss-mark" id="option-{{ option.name | handle }}">
                         {% for value in option.values %}
                           <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
                             {{ value }}
                           </option>
                         {% endfor %}
                       </select>
+<!--                     BSS custom -->
+                      <div>
+                        <fieldset class="bss-custom-product-form__input">
+                            {%- for value in option.values -%}
+                              <input
+                                type="radio"
+                                id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                                name="{{ option.name }}"
+                                value="{{ value | escape }}"
+                                form="{{ product_form_id }}"
+                                {% if option.selected_value == value %}
+                                  checked
+                                {% endif %}
+                              >
+                              <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
+                                {{ value }}
+                              </label>
+                            {%- endfor -%}
+                        </fieldset>
+                      </div>
                     </div>
                   {% endfor %}
                 </div>
@@ -323,7 +345,10 @@
                             </div>
                             <div>{{ product.variants.first[opt_idx] }}</div>
                           {% else %}
-                            <label>{{ option }}:</label> {{ product.variants.first[opt_idx] }}
+                            <label style="font-weight: 600;color: #12283E;">{{ option }}:</label>
+                            <div class="bss-custom-product-form__input">
+                              <label style="opacity: 1!important;font-weight: 700;">{{ product.variants.first[opt_idx] }} </label>
+                            </div>
                           {% endif %}
                         </div>
                       {%- endif -%}
@@ -354,6 +379,7 @@
                 {%- assign product_form_present = true -%}
                 {% form 'product', product, id: product_form_id, class: 'form product-purchase-form', data-product-id: product.id %}
                   {{- original_select -}}
+                  <label class="bss-custom-label-mobile">Quantity</label>
                   <div class="payment-and-quantity
                           product-detail__gap-lg
                           payment-and-quantity--buttons-active
@@ -363,6 +389,7 @@
 
                     {% if settings.prod_quantity_controls != "none" %}
                       <div class="quantity">
+                        <label class="bss-custom-label">Quantity</label>
                         <div class="qty-adjuster {% if use_ajax_quantities %}qty-adjuster--ajax{% endif %}"
                             data-limit="{% if current_variant.inventory_management != blank and current_variant.inventory_policy == 'deny' %}{{ current_variant.inventory_quantity }}{% endif %}">
                           <div class="qty-adjuster__inner">
@@ -378,24 +405,27 @@
                     {% else %}
                       <input type="hidden" name="quantity" value="1"/>
                     {% endif %}
-
-                    <span class="payment-and-quantity__add">
-                            <button type="submit" name="add"
-                                    class="btn product-add mini-form {% if block.settings.enable_payment_button and product.selling_plan_groups == empty %}alt outline{% endif %}">
-                              <span class="button-text">{% if product.available %}{{ 'products.grid.add_to_cart' | t }}{% else %}{{ 'products.product.unavailable' | t }}{% endif %}</span>
-                              <span class="loading-spinner" aria-label="{{ 'products.product.adding_to_cart' | t }}"></span>
-                            </button>
-                          </span>
-
-                    {% if block.settings.enable_payment_button and product.selling_plan_groups == empty %}
-                      {{ form | payment_button }}
-                    {% endif %}
+<!--                     <div class="bss-custom-product-atc"> -->
+                      {% if block.settings.enable_payment_button and product.selling_plan_groups == empty %}
+                        {{ form | payment_button }}
+                      {% endif %}
+                      <span class="payment-and-quantity__add">
+                          <button type="submit" name="add"
+                                  class="btn product-add mini-form gPreorderAddToCartBtn {% if block.settings.enable_payment_button and product.selling_plan_groups == empty %}alt outline{% endif %}">
+                            <span class="button-text">{% if product.available %}{{ 'products.grid.add_to_cart' | t }}{% else %}{{ 'products.product.unavailable' | t }}{% endif %}</span>
+                            <span class="loading-spinner" aria-label="{{ 'products.product.adding_to_cart' | t }}"></span>
+                          </button>
+                      </span>
+<!--                     </div> -->
                   </div>
                 {% endform %}
+
               {% else %}
-                <div class="rte product-detail__gap-lg" {{ block.shopify_attributes }}>
-                  {{ 'products.product.product_unavailable_html' | t }}
-                </div>
+                   {% form 'product', product, id: product_form_id, class: 'form product-purchase-form', data-product-id: product.id %}
+                      <div class="rte product-detail__gap-lg gPreorderAddToCartBtn" {{ block.shopify_attributes }}>
+                        {{ 'products.product.product_unavailable_html' | t }}
+                      </div>
+                   {% endform %}
               {% endif %}
 
               {% unless block.settings.show_pickup_availability == false %}
@@ -563,6 +593,7 @@
 
           <div class="payment-and-quantity product-detail__gap-lg payment-and-quantity--buttons-active payment-and-quantity--with-quantity">
             <div class="quantity">
+              <label>Quantity</label>
               <div class="qty-adjuster">
                 <div class="qty-adjuster__inner">
                   <button class="qty-adjuster__down"
@@ -590,8 +621,27 @@
 
   {% if is_featured_product == false  %}
     {% if section.settings.description_below %}
-      <div class="rte section reading-column product-description-below" data-cc-animate data-cc-animate-delay="0.2s">{{ product.description | replace: 'fullwidth"', '" data-fullwidth="true"' }}</div>
-    {% endif %}
+<!--       <div class="rte section reading-column product-description-below" data-cc-animate data-cc-animate-delay="0.2s">{{ product.description | replace: 'fullwidth"', '" data-fullwidth="true"' }}</div> -->
+      <div class="bss-tabs-wrapper">
+        <ul class="tabs-discription">
+          <li><a href="#tab-1">DESCRIPTION</a></li>
+          <li><a href="#tab-2">RETURN POLICY</a></li>
+          <li><a href="#tab-3">TERM & CONDITIONS</a></li>
+          <li><a href="#tab-4">REVIEW</a></li>
+        </ul>
+        <div class="tabs-item" id="tab-1">
+        {{ product.description }}
+        </div>
+        <div class="tabs-item" id="tab-2">
+          <p>{{ section.settings.return_policy }}</p>
+        </div>
+        <div class="tabs-item" id="tab-3">
+        {{ section.settings.term_condition }}
+        </div>
+        <div class="tabs-item" id="tab-4">
+        </div>
+      </div>
+      {% endif %}
 
     {% if section.settings.show_reviews %}
       <div class="theme-product-reviews-full section" data-cc-animate data-cc-animate-delay="0.2s">
@@ -621,7 +671,6 @@
 
   {% render 'structured-data-product', product: product, current_variant: current_variant %}
 </div>
-
 
 {% schema %}
   {
@@ -660,6 +709,30 @@
             "id": "show_tax_and_shipping",
             "label": "Show tax status and shipping policy link",
             "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "countdown_timer",
+            "label": "Countdown Timer",
+            "default": false
+          },
+          {
+            "type": "text",
+            "id": "countdown_title",
+            "label": "Countdown title",
+            "default": "Limited-time offer. End in:"
+          },
+          {
+            "type": "text",
+            "id": "end_date",
+            "label": "End date (Format: Nov 12, 2022 20:00:00)",
+            "default": "Nov 12, 2022 20:00:00"
+          },
+          {
+            "type": "text",
+            "id": "bar_title",
+            "label": "Bar title",
+            "default": "Please hurry! Only 10 left in stock"
           }
         ]
       },
@@ -1076,6 +1149,16 @@
         "id": "description_below",
         "label": "Show product description below images/product form",
         "default": false
+      },
+      {
+        "type": "html",
+        "id": "return_policy",
+        "label": "Return policy"
+      },
+      {
+        "type": "html",
+        "id": "term_condition",
+        "label": "Term conditions"
       },
       {
         "type": "checkbox",

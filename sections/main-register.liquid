@@ -22,7 +22,7 @@
 
     <div id="email" class="input-row">
       <label for="email" class="label">{{ 'customer.register.email' | t }}</label>
-      <input type="email" value="" name="customer[email]" id="email" class="text" size="30" />
+      <input bss-b2b-is-email-field type="email" value="" name="customer[email]" id="email" class="text" size="30" />
     </div>
 
     <div id="password" class="input-row">
@@ -39,3 +39,4 @@
 
   </div><!-- #register -->
 </div><!-- #customer-register -->
+{% include 'bss-b2b-wholesaler-default-login-form' %}

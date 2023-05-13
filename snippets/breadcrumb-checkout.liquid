@@ -1,0 +1,165 @@
+{% unless template == 'index' or template contains 'collection' %}
+	<section id="breadcrumbs" class="breadcrumbs {% if noMarginBottom != blank %} no-margin {% endif %}">
+
+		<div class="container">
+			<nav>
+				<ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
+					<li itemprop="itemlistelement" itemscope itemtype="http://schema.org/ListItem">
+						<a href="/" title="{{ 'general.breadcrumbs.home_link_title' | t }}" itemprop="item">
+							<span itemprop="name">{{ 'general.breadcrumbs.home' | t }}</span>
+						</a>
+						<meta itemprop="position" content="1"/>
+
+					</li>
+					{% if template contains 'product' %}
+						{% if collection %}
+							{% if collection.handle %}
+								{% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+								<li itemprop="itemlistelement" itemscope itemtype="http://schema.org/ListItem">
+									<a href="{{ url }}" title="{{ collection.title }}" itemprop="item">
+										<span itemprop="name">{{ collection.title }}</span>
+									</a>
+									<meta itemprop="position" content="2"/>
+
+								</li>
+							{% endif %}
+						{% endif %}
+
+						<li class="active" itemprop="itemListElement" itemscope
+							itemtype="http://schema.org/ListItem">
+							<span itemprop="item"><span itemprop="name">{{ product.title }}</span></span>
+							{% if collection %}
+								{% if collection.handle %}
+									<meta itemprop="position" content="3"/>
+								{% endif %}
+							{% else %}
+								<meta itemprop="position" content="2"/>
+							{% endif %}
+						</li>
+                        {% comment %}
+						{% elsif template contains 'collection' and collection.handle %}
+							{% if current_tags %}
+								{% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+								<li itemprop="itemlistelement" itemscope itemtype="http://schema.org/ListItem">
+									<a href="{{ url }}" title="{{ collection.title }}" itemprop="item">
+										<span itemprop="name">{{ collection.title }}</span>
+									</a>
+									<meta itemprop="position" content="2"/>
+								</li>
+								<li class="active" itemprop="itemlistelement" itemscope
+									itemtype="http://schema.org/ListItem">
+									<span itemprop="item"><span
+												itemprop="name">{{ current_tags | join: " + " }}</span></span>
+									<meta itemprop="position" content="3"/>
+								</li>
+							{% else %}
+								<li class="active" itemprop="itemlistelement" itemscope
+									itemtype="http://schema.org/ListItem">
+									<span itemprop="item"><span itemprop="name">{{ collection.title }}</span></span>
+									<meta itemprop="position" content="2"/>
+								</li>
+							{% endif %}
+                        {% endcomment %}
+						{% elsif template contains 'blog' %}
+							{% if current_tags %}
+								<li itemprop="itemlistelement" itemscope itemtype="http://schema.org/ListItem">
+									<a href="{{ blog.url }}" title="{{ blog.title }}" itemprop="item">
+										<span itemprop="name">{{ blog.title }}</span>
+									</a>
+									<meta itemprop="position" content="2"/>
+								</li>
+								<li class="active" itemprop="itemlistelement" itemscope
+									itemtype="http://schema.org/ListItem">
+									<span itemprop="item"><span itemprop="name">{{ current_tags | join: " + " }}</span></span>
+									<meta itemprop="position" content="3"/>
+								</li>
+							{% else %}
+								<li class="active" itemprop="itemlistelement" itemscope
+									itemtype="http://schema.org/ListItem">
+									<span itemprop="item"><span itemprop="name">{{ blog.title }}</span></span>
+									<meta itemprop="position" content="2"/>
+								</li>
+							{% endif %}
+						{% elsif template contains 'article' %}
+							<li itemprop="itemlistelement" itemscope itemtype="http://schema.org/ListItem">
+								<a href="{{ blog.url }}" title="{{ blog.title }}" itemprop="item">
+									<span itemprop="name">{{ blog.title }}</span>
+								</a>
+								<meta itemprop="position" content="2"/>
+							</li>
+							<li class="active" itemprop="itemlistelement" itemscope
+								itemtype="http://schema.org/ListItem">
+								<span itemprop="item"><span itemprop="name">{{ article.title }}</span></span>
+								<meta itemprop="position" content="3"/>
+							</li>
+
+						{% elsif template contains 'page' %}
+							<li class="active" itemprop="itemlistelement" itemscope
+								itemtype="http://schema.org/ListItem">
+								<span itemprop="item"><span itemprop="name">{{ page.title }}</span></span>
+								<meta itemprop="position" content="2"/>
+							</li>
+
+					   {% else %}
+						<li class="active" itemprop="itemlistelement" itemscope
+							itemtype="http://schema.org/ListItem">
+							<span itemprop="item"><span itemprop="name">{{ page_title }}</span></span>
+							<meta itemprop="position" content="2"/>
+						</li>
+					{% endif %}
+				</ol>
+			</nav>
+
+		</div>
+
+	</section>
+{% endunless %}
+
+{% if template contains 'collection' and collection.handle %}
+	<section id="breadcrumbs" class="breadcrumbs {% if noMarginBottom != blank %} no-margin {% endif %}">
+		<div class="container">
+			<nav>
+				<ol class="breadcrumb" 
+					<li itemprop="itemlistelement" 
+						<a href="/" title="{{ 'general.breadcrumbs.home_link_title' | t }}" itemprop="item">
+							<span itemprop="name">{{ 'general.breadcrumbs.home' | t }}</span>
+						</a>
+						<meta itemprop="position" content="1"/>
+
+					</li>
+
+						<li class="active" itemprop="itemListElement" 
+							<span itemprop="item"><span itemprop="name">{{ product.title }}</span></span>
+							{% if collection %}
+								{% if collection.handle %}
+									<meta itemprop="position" content="3"/>
+								{% endif %}
+							{% else %}
+								<meta itemprop="position" content="2"/>
+							{% endif %}
+						</li>
+							{% if current_tags %}
+								{% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+								<li itemprop="itemlistelement"
+									<a href="{{ url }}" title="{{ collection.title }}" itemprop="item">
+										<span itemprop="name">{{ collection.title }}</span>
+									</a>
+									<meta itemprop="position" content="2"/>
+								</li>
+								<li class="active" itemprop="itemlistelement"
+									<span itemprop="item"><span
+												itemprop="name">{{ current_tags | join: " + " }}</span></span>
+									<meta itemprop="position" content="3"/>
+								</li>
+							{% else %}
+								<li class="active" itemprop="itemlistelement"
+									<span itemprop="item"><span itemprop="name">{{ collection.title }}</span></span>
+									<meta itemprop="position" content="2"/>
+								</li>
+							{% endif %}
+
+				</ol>
+			</nav>
+		</div>
+	</section>
+{% endif %}

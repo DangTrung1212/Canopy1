@@ -1,0 +1,54 @@
+/*********************** Custom CSS for Boost AI Search & Discovery  ************************/
+@media only screen and (min-width:600px){.boost-sd__filter-option-label--inline-block{width:155px}.boost-sd__filter-option-label--inline-block>button{width:100%}}.boost-sd__product-image-column .boost-sd__btn-quick-view:hover{background-color:#fff!important}.boost-sd__filter-option-label,.boost-sd__sorting-button{border:1px solid #d3d3d3;padding:0 15px!important}.boost-sd__sorting-button::after{right:6px!important}.boost-sd__recommendation-title::after,.boost-sd__recommendation-title::before,.slick-next:before,.slick-prev:before{content:none!important}.boost-sd__recommendation-title{align-items:center;justify-content:center}.boost-sd__recommendation-title-text{font-weight:600!important}.boost-sd__search-form-wrapper{background-color:transparent!important}@media only screen and (max-width:600px){.boost-sd__recommendation-title-text{font-size:16px!important}.boost-sd__sorting-button{border:none}}
+.boost-sd__instant-search-results--one-column .boost-sd__instant-search-autocomplete {
+  width: 500px!important;
+}
+.boost-sd__search-widget-init-wrapper {
+  right: 30px!important;
+}
+.boost-sd-layout,
+.boost-sd__recommendation{
+  max-width: unset!important;
+}
+.boost-sd__product-link {
+  height: 100%
+}
+.boost-sd__product-info {
+  height: 100%;
+  flex-wrap: nowrap!important;
+  flex-direction: column;
+}
+.boost-sd__product-title {
+  flex-grow: 1;
+}
+@media only screen and (min-width: 768px) {
+  .boost-sd__filter-option--horizontal {
+    display: block!important;
+  }
+  .boost-sd__filter-tree-horizontal-option-list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .boost-sd__filter-option-label--inline-block {
+    margin-right: 15px;
+  }
+  .boost-sd__toolbar-inner,
+  .boost-sd__toolbar-content {
+    width: 100%;
+    max-width: 100%!important;
+  }
+  .boost-sd__toolbar-top-mobile .boost-sd__sorting-button {
+    padding: 0px 30px 0px 10px!important;
+  }
+}
+
+.boost-sd__header-title {
+    font-weight: 900!important;
+    font-size: 60px!important;
+}
+.boost-sd__view-as-icon--grid--6{
+  display:none!important
+}
+.boost-sd__button.boost-sd__button--apply.boost-sd__button--btn-filter-option-color:hover{
+color:#fff                                                                                        
+}

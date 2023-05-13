@@ -1,1 +1,1 @@
-{"sections":{"main":{"type":"main-blog","settings":{}}},"order":["main"]}
+{"sections":{"main":{"type":"main-blog","settings":{"blog_show_title":true,"show_rss":true,"show_tags":true,"show_author":false,"show_meta_on_listing":false,"show_tags_on_articles":false,"show_sharing_icons":true,"tile_mode":"tile","crop_ratio":"1-1","use_inf_scroll":false}}},"order":["main"]}

@@ -1,0 +1,77 @@
+<script>
+   const preorderCustom = {
+       render: function(){
+           this.initSelectors()
+           this.handleEvents()
+       },
+       initSelectors: function(){
+           window.GloboPreorderParams =  window.GloboPreorderParams || {};
+           window.GloboPreorderParams.selectors = window.GloboPreorderParams.selectors || {};
+           window.GloboPreorderParams.selectors.collectionProductForms = "";
+           window.GloboPreorderParams.selectors.productForm = [".product-form form.form"];
+           window.GloboPreorderParams.selectors.productVariantSelector += ', .variantId';
+           window.GloboPreorderParams.selectors.pproductAddToCartBtn = [".gPreorderAddToCartBtn"];
+           window.GloboPreorderParams.selectors.productVariantActivator += ", .pretty-select select";
+       },
+       handleEvents: function(){
+           const app = this;
+           window.addEventListener('load', function(){
+               $(document).on('click change', window.GloboPreorderParams.selectors.productVariantActivator, function(){
+                   window.Globo.Preorder.appSetInterval(function(){
+                     if(window.GloboPreorderParams.page == 'product' && $('form.singleProductPreOrderForm').length){
+                         app.renderSingleProductForm($('form.singleProductPreOrderForm'), window.GloboPreorderParams.product)
+                     }
+                   }, 300, 2)
+               })
+               window.Globo.Preorder.appSetInterval(function(){
+                 if(window.GloboPreorderParams.page == 'product' && $('form.singleProductPreOrderForm').length){
+                     app.renderSingleProductForm($('form.singleProductPreOrderForm'), window.GloboPreorderParams.product)
+                 }
+               }, 300, 2)
+               $('div.rte.product-detail__gap-lg.gPreorderAddToCartBtn').click(function(t){
+                     t.preventDefault()
+                     t.stopPropagation()
+               })
+           })
+       },
+       getVariantId: function(product){
+           let variantId = product?.first_available_variant?.id || product.variants[0].id;
+           let shopUrl = window.location.search;
+           if(shopUrl.includes('variant=')){
+               let indexOfVariantId = shopUrl.indexOf('=') + 1;
+               variantId = shopUrl.slice(indexOfVariantId)
+           }
+
+           return variantId;
+       },
+       initVariantElement: function(form, product){
+           let variantId = this.getVariantId(product)
+
+           if($(form).find('input[name="id"]:not(.variantId)').length){
+               $(form).find('input[name="id"]:not(.variantId)').val(variantId)
+           }else if($(form).find('select[name="id"]:not(.variantId)').length){
+               $(form).find('select[name="id"]:not(.variantId) option[selected="selected"]').removeAttr('selected')
+               $(form).find(`select[name="id"]:not(.variantId) option[value="${variantId}"]`).attr('selected', 'selected')
+               $(form).find('select[name="id"]:not(.variantId)').val(variantId)
+           }else if($(form).find('.variantId').length){
+               $(form).find('.variantId').val(variantId)
+           }else{
+               let variantElement = `<input name="id" class="variantId" checked type="radio" style="display: none;" value="${variantId}" />`;
+               $(form).append(variantElement)
+           }
+       },
+       renderSingleProductForm: async function(form, product){
+            const app = window.Globo.Preorder;
+            const productVariantActivator = app.settings.selectors.productVariantActivator;
+            const productVariantSelector = app.settings.selectors.productVariantSelector;
+            const productQuantitySelector = app.settings.selectors.productQuantitySelector;
+            const productAddToCartTextElement = app.settings.selectors.productAddToCartTextElement;
+            const paymentButton = app.settings.selectors.paymentButton;     
+  
+            await this.initVariantElement(form, product)
+            app.renderProductForm(product, form, productVariantActivator, productVariantSelector, productQuantitySelector, '.gPreorderAddToCartBtn', productAddToCartTextElement, paymentButton)
+            app.renderBisForm(product, form, productVariantActivator, productVariantSelector)
+       }
+   }
+   preorderCustom.render()
+</script>

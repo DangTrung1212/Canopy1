@@ -1,0 +1,55 @@
+<div class="bss-sticky-navbar-wrapper mobile-only">
+  <div class="bss-sticky-navbar">
+    <div class="nav-item" id="nav-home">
+      <a href="/">
+        <img src="https://cdn.shopify.com/s/files/1/0670/3484/1376/files/HOME.png?v=1683777177">
+      </a>
+    </div>
+    <div class="nav-item" id="nav-search">
+      <img src="https://cdn.shopify.com/s/files/1/0670/3484/1376/files/SEARCH.png?v=1683777177">
+    </div>
+    <div class="nav-item" id="nav-cate">
+      <img src="https://cdn.shopify.com/s/files/1/0670/3484/1376/files/CATE.png?v=1683777177">
+    </div>
+    <div class="nav-item" id="nav-acc">
+      <a href="{{ routes.account_url }}">
+        <img src="https://cdn.shopify.com/s/files/1/0670/3484/1376/files/ACC.png?v=1683777177">
+      </a>
+    </div>
+    <div class="nav-item" id="nav-cart">
+      <img src="https://cdn.shopify.com/s/files/1/0670/3484/1376/files/CART.png?v=1683777177">
+    </div>
+  </div>
+</div>
+<style>
+  .bss-sticky-navbar-wrapper {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    z-index: 5;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  }
+  .bss-sticky-navbar {
+    padding: 10px 0px;
+    display: flex;
+    justify-content: space-around;
+    align=items: center;
+  }
+  .bss-sticky-navbar .nav-item {
+    color: black;
+  }
+</style>
+<script>
+  document.getElementById("nav-search").addEventListener("click", function() {
+    document.querySelector(".mobile-only .main-search__input").click()
+  })
+  document.getElementById("nav-cate").addEventListener("click", function() {
+    document.querySelector(".toggle-mob-nav").click()
+  })
+  document.getElementById("nav-cart").addEventListener("click", function() {
+    console.log(document.querySelector(".bss-custom-mobile .toolbar-cart"))
+    console.log(423642683)
+    document.querySelector(".bss-custom-mobile .toggle-cart-summary").click()
+  })
+</script>

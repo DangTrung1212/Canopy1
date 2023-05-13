@@ -55,6 +55,21 @@
             </div>
           {%- endif -%}
         {% endif %}
+        <div class="nav-item bss-mobile-nav-custom">
+          <a href="{{ routes.account_url }}">
+            <img style="margin-right: 8px" height="20px" width="20px" src="https://cdn.shopify.com/s/files/1/0670/3484/1376/files/user.png?v=1683789933">  
+            <span>Sign In</span>
+          </a>
+        </div>
+        <div class="nav-item bss-mobile-nav-custom">
+          <a href="{{ account_register_url }}">
+            <img style="margin-right: 8px" height="20px" width="20px" src="https://cdn.shopify.com/s/files/1/0670/3484/1376/files/add-user.png?v=1683789871">  
+            <span>Create an Account</span>
+          </a>
+        </div>
+        <div class="nav-item bss-mobile-nav-custom">
+            {{ promo_message }}
+        </div>
       </nav>
     </div>
     <footer class="localization localization--mobile-menu" id="localization--mobile-menu"></footer>

@@ -1,7 +1,7 @@
 <section class="border-top section products-section {% if section.settings.alternate_bg_color %}use-alt-bg full-width-section{% endif %} section-padding-{{ settings.section_padding }}" data-section-type="featured-collection">
   <div class="container" data-cc-animate>
     {% assign collection = collections[section.settings.collection] %}
-
+    
     {% if section.settings.title != blank or section.settings.show_view_all %}
       <div class="opposing-items opposing-items--heading">
         {% if section.settings.title != blank %}

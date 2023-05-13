@@ -1,0 +1,247 @@
+<div class="section-usp--{{ section.settings.layout }}">
+
+	<div class="container ss-list-card">
+		{% if section.settings.title != blank %}
+			<div class="section-header text-center">
+				<h2>{{ section.settings.title }}</h2>
+			</div>
+		{% endif %}
+		{% if section.blocks.size > 0 %}
+			<div class="row {{ section.settings.layout }}">
+				{% for block in section.blocks limit: section.blocks.size %}
+					{%- assign img_width =  block.settings.image_width -%}
+					{% if img_width == 'custom' %}
+						{%- assign img_width =  block.settings.img_custom | append: 'x' -%}
+					{% endif %}
+					{% if img_width == '' %}
+						{%- assign img_width =  'medium' -%}
+					{% endif %}
+					<div class="col-{{ block.settings.col_mobile }} col-md-4 col-lg-{{ block.settings.col }} ">
+						<div class="item">
+							{% if block.settings.ulr != blank and block.settings.image != blank %}
+								{% if block.settings.image != blank %}
+									<div class="media">
+										<a href="{{ block.settings.ulr }}">
+											 {%- assign img_url =  block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                                          <img class="lazyload grid-view-item__image" data-src="{{ img_url}}" data-widths="[180, 360]" data-aspectratio="{{ block.settings.image.aspect_ratio }}" data-sizes="auto" data-image alt="{{ block.settings.title }} " />
+										</a>
+									</div>
+								{% endif %}
+								{% elsif block.settings.image != blank %}
+								<div class="media">
+                                  {%- assign img_url =  block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                                          <img class="lazyload grid-view-item__image" data-src="{{ img_url}}" data-widths="[180, 360]" data-aspectratio="{{ block.settings.image.aspect_ratio }}" data-sizes="auto" data-image alt="{{ block.settings.title }} " />
+                                </div>
+							{% endif %}
+
+							<div class="content">
+								{% if block.settings.ulr != blank and block.settings.title != blank %}
+                                      <a href="{{ block.settings.ulr }}">
+                                          <div class="title"><h4>{{ block.settings.title }}</h4></div>
+                                      </a>
+									{% elsif block.settings.title != blank %}
+                                      <div class="title"><h4>{{ block.settings.title }}</h4></div>
+								{% endif %}
+
+
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+
+	</div>
+</div>
+
+{% schema %}
+{
+  "name": "List card",
+  "class": "index-section index-section--usp",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "default": "style_1",
+      "options": [
+        {
+          "value": "style_1",
+          "label": "Style 1"
+        },
+        {
+          "value": "style_2",
+          "label": "Style 2"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "url",
+          "id": "ulr",
+          "label": "Url"
+        },
+
+        {
+          "type": "select",
+          "id": "col",
+          "label": "Column item",
+          "default": "4",
+          "options": [
+            {
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "value": "4",
+              "label": "4"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "6",
+              "label": "6"
+            },
+            {
+              "value": "7",
+              "label": "7"
+            },
+            {
+              "value": "8",
+              "label": "8"
+            },
+            {
+              "value": "9",
+              "label": "9"
+            },
+            {
+              "value": "10",
+              "label": "10"
+            },
+            {
+              "value": "12",
+              "label": "12"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "col_mobile",
+          "label": "Column item on mobile",
+          "default": "6",
+          "options": [
+            {
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "value": "4",
+              "label": "4"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "6",
+              "label": "6"
+            },
+            {
+              "value": "7",
+              "label": "7"
+            },
+            {
+              "value": "8",
+              "label": "8"
+            },
+            {
+              "value": "9",
+              "label": "9"
+            },
+            {
+              "value": "10",
+              "label": "10"
+            },
+            {
+              "value": "12",
+              "label": "12"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Image Setting"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Select image"
+        },
+        {
+          "type": "select",
+          "id": "image_width",
+          "label": "Image width",
+          "default": "medium",
+          "options": [
+            {
+              "value": "small",
+              "label": "Small"
+            },
+            {
+              "value": "medium",
+              "label": "Medium"
+            },
+            {
+              "value": "master",
+              "label": "Master"
+            },
+            {
+              "value": "custom",
+              "label": "Custom"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "img_custom",
+          "label": "Custom width",
+          "default": "120"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "List card",
+      "category": "Advanced layout"
+    }
+  ]
+}
+{% endschema %}
+
+<!-- GPO installed -->

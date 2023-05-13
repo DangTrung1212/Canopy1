@@ -1,30 +1,28 @@
 <footer id="page-footer" class="page-footer" data-section-type="footer" data-cc-animate>
-  <div class="container">
-
-    <div class="back-to-top-row align-centre">
-      <a class="hash-link" href="#page-wrap-content"><span class="beside-svg">{{ 'layout.footer.back_to_top' | t }}</span> {% render 'svg-chevron-up' %}</a>
+    <div class="padless-top signup-row bss-custom-signup">
+    <div class="social-column align-right-desktop {% if section.settings.footer_display_newsletter %}half column{% else %}full column{% endif %}">
+      <p>DON'T MISS OUT! LET'S JOIN OUR CONVERSATION</p>
     </div>
-
-    <div class="row section padless-top signup-row">
-
-      <div class="extra-column half column">
-        {% if section.settings.footer_display_newsletter %}
-          {% if section.settings.newsletter_text != blank %}
-            <div class="rte lightly-spaced-row">{{ section.settings.newsletter_text }}</div>
-          {% endif %}
-          {% render 'mailing-signup', form_id: 'footer_signup_form' %}
+    <div class="extra-column half column">
+      {% if section.settings.footer_display_newsletter %}
+        {% if section.settings.newsletter_text != blank %}
+          <div class="rte lightly-spaced-row">{{ section.settings.newsletter_text }}</div>
         {% endif %}
-      </div>
-
-      <div class="social-column align-right-desktop {% if section.settings.footer_display_newsletter %}half column{% else %}full column{% endif %}">
-        {% render 'social-icons', icon_setting: settings.social_custom_icon_footer, icon_size: 'x48' %}
-      </div>
-
+        {% render 'mailing-signup', form_id: 'footer_signup_form' %}
+      {% endif %}
     </div>
+
+
+<!--       <div class="social-column align-right-desktop {% if section.settings.footer_display_newsletter %}half column{% else %}full column{% endif %}">
+      {% render 'social-icons', icon_setting: settings.social_custom_icon_footer, icon_size: 'x48' %}
+    </div> -->
+
+  </div>
+  <div class="container">
 
     {% if section.settings.footer_complexity == 'columns' %}
 
-      <div class="footer-columns row section padless-top">
+      <div class="footer-columns bss-padless-bottom row section padless-top">
         {% if section.settings.show_footer_logo %}
           <div class="logo-column column">
             <div class="footer-logo-container">
@@ -42,9 +40,16 @@
             <div class="rte">{{ section.settings.text_content }}</div>
           </div>
         {% endif %}
-
+        <div class="bss-footer-info links-column">
+          <h4 class="bss-custom-footer-title">GENERAL TRADING FASHIONS ONE MEMBER COMPANY LIMITED</h4>
+          <p><b>Office:</b> 163 Phan Dang Luu, Ward 1, Phu Nhuan District, Ho Chi Minh City, Viet Nam</p>
+          <p><b>E-commerce Warehouse:</b> TBS Logistics Tan Van, Binh Duong Province, Viet Nam</p>
+          <p><b>Hotline:</b> 1900 63 64 01</p>
+          <p><b>Business Code:</b> 0314635071, register changes on April 20, 2020</p>
+        </div>
         {% if section.settings.footer_linklist != blank %}
-        <div class="links-column column" role="navigation" aria-label="{{ 'layout.footer.menu_1_aria_label' | t | escape }}">
+        <div class="links-column column accordion" role="navigation" aria-label="{{ 'layout.footer.menu_1_aria_label' | t | escape }}">
+          <h4 class="bss-custom-footer-title">{{ linklists[section.settings.footer_linklist].title }}</h4>
           <ul class="plain">
             {% for link in linklists[section.settings.footer_linklist].links %}
               <li>{{ link.title | link_to: link.url }}</li>
@@ -54,7 +59,8 @@
         {% endif %}
 
         {% if section.settings.footer_linklist2 != blank %}
-        <div class="links-column column" role="navigation" aria-label="{{ 'layout.footer.menu_2_aria_label' | t | escape }}">
+        <div class="links-column column accordion" role="navigation" aria-label="{{ 'layout.footer.menu_2_aria_label' | t | escape }}">
+          <h4 class="bss-custom-footer-title">{{ linklists[section.settings.footer_linklist2].title }}</h4>
           <ul class="plain">
             {% for link in linklists[section.settings.footer_linklist2].links %}
               <li>{{ link.title | link_to: link.url }}</li>
@@ -64,7 +70,8 @@
         {% endif %}
 
         {% if section.settings.footer_linklist3 != blank %}
-        <div class="links-column column" role="navigation" aria-label="{{ 'layout.footer.menu_3_aria_label' | t | escape }}">
+        <div class="links-column column accordion" role="navigation" aria-label="{{ 'layout.footer.menu_3_aria_label' | t | escape }}">
+          <h4 class="bss-custom-footer-title">{{ linklists[section.settings.footer_linklist3].title }}</h4>
           <ul class="plain">
             {% for link in linklists[section.settings.footer_linklist3].links %}
               <li>{{ link.title | link_to: link.url }}</li>
@@ -72,6 +79,18 @@
           </ul>
         </div>
         {% endif %}
+      {% if section.settings.footer_payment_icons %}
+        <div class="inline-item right last payment-methods links-column">
+          <h4 class="bss-custom-footer-title">PAYMENT METHODS</h4>
+          <img class="mobile-only" style="margin-bottom: 20px; width: 190px;" src="https://cdn.shopify.com/s/files/1/0670/3484/1376/files/image_41_487e5803-f4d0-489f-ac14-7b301b6cbb92.png?v=1683197427" alt="certificate">
+          <div>
+            {% for type in shop.enabled_payment_types %}
+              {{ type | payment_type_svg_tag: class: 'payment-icon' }}
+            {% endfor %}
+          </div>
+          <img class="desktop-only" src="https://cdn.shopify.com/s/files/1/0670/3484/1376/files/image_41_487e5803-f4d0-489f-ac14-7b301b6cbb92.png?v=1683197427" alt="certificate">
+        </div>
+      {% endif %}
       </div>
 
     {% else %}
@@ -131,21 +150,14 @@
     {% endif %}
 
     <div class="footer-lower inline-row spaced">
-      {% if section.settings.footer_payment_icons %}
-        <div class="inline-item right last payment-methods">
-          {% for type in shop.enabled_payment_types %}
-            {{ type | payment_type_svg_tag: class: 'payment-icon' }}
-          {% endfor %}
-        </div>
-      {% endif %}
-      <div class="inline-item left">
+<!--       <div class="inline-item left">
         <div class="copy">
           {{ 'layout.footer.copyright' | t }}
           &copy; {{ "now" | date: "%Y" }} <a href="{{ routes.root_url }}">{{ shop.name }}</a>
         </div>
 
         {{ powered_by_link }}
-      </div>
+      </div> -->
     </div>
 
   </div>
