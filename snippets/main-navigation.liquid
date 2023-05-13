@@ -24,7 +24,7 @@
         <li class="logo-item logo-item-center">{{ logo_html }}</li>
       {%- endif -%}
 
-      <li class="nav-item{% if forloop.first %} first{% elsif forloop.last %} last{% endif %}{% if link.active %} active{% endif %}{% if link.links != blank %} dropdown {% if has_mega_drop_down %}drop-uber{% else %}drop-norm{% endif %}{% endif %}">
+      <li class="nav-item{% if forloop.first %} first{% elsif forloop.last %} last{% endif %}{% if link.active %} active{% endif %}{% if link.links != blank %} dropdown {% if has_mega_drop_down %}drop-uber{% else %}drop-uber drop-norm{% endif %}{% endif %}">
 
         <a class="nav-item-link{% if featured_links contains link.title %} nav-item-link--featured{% endif %}" href="{{ link.url }}" {% if link.links != blank %}aria-haspopup="true" aria-expanded="false"{% endif %}>
           <span class="nav-item-link-title">{{ link.title }}</span>
@@ -55,7 +55,7 @@
                 {% for child_link in link.links %}
                 <ul class="sub-nav-list">
                   <li class="sub-nav-item">
-                    <a href="{{ child_link.url }}"><span class="sub-nav-item-title">{{ child_link.title }}</span></a>
+                    <a class="bss-custom-nav-title" href="{{ child_link.url }}"><span class="sub-nav-item-title">{{ child_link.title }}</span><span style="color: black;">View all</span></a>
                   </li>
                   {% for child_child_link in child_link.links %}
                   <li class="sub-nav-item{% if child_child_link.active %} active{% endif %}">

@@ -15,6 +15,10 @@
     }
     {%- endif -%}
 
+    #section-id-{{ section.id }} .rimage-outer-wrapper {
+      background-position: {{ section.settings.image_position }}
+    }
+
     @media (min-width: 768px) {
       {%- if section.settings.height == 'fixed' -%}
       #section-id-{{ section.id }} .rimage-outer-wrapper ,
@@ -41,7 +45,9 @@
     {%- if section.settings.title != blank or section.settings.subheading != blank or section.settings.text != blank or section.settings.button1_label != blank or section.settings.button2_label != blank -%}
       {%- assign show_overlay_text = true -%}
     {%- endif -%}
-
+    {% if section.settings.heading != blank %}
+    <h2 class="section-heading">{{ section.settings.heading }}</h2>
+    {% endif %}
     <div class="height--{{ section.settings.height }} {% if section.settings.image_overlay_style != "none" %}has-tint has-tint--{{ section.settings.image_overlay_style }}{% else %}no-tint{% endif %} {% if section.settings.mobile_overlay_under %}has-tint--desktop-only{% endif %}" data-cc-animate>
       {%- unless section.settings.image_link == blank or section.settings.text contains '</a>' or section.settings.button1_link != blank or section.settings.button2_link != blank -%}<a href="{{ section.settings.image_link }}">{%- endunless -%}
 
@@ -51,7 +57,7 @@
           </div>
         {% else %}
           {% assign img_url = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
-          <div class="rimage-outer-wrapper rimage-background" data-lazy-bg="{{ img_url }}" style="background-position: {{ section.settings.image.presentation.focal_point }}">
+          <div class="rimage-outer-wrapper rimage-background {% if section.settings.image_mobile != blank %}desktop-only{% endif %}" data-lazy-bg="{{ img_url }}">
             {%- if section.settings.height == 'natural' -%}
               <div class="rimage-wrapper lazyload--placeholder" style="padding-top:{{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%"></div>
             {%- endif -%}
@@ -61,6 +67,19 @@
               </div>
             </noscript>
           </div>
+          {% if section.settings.image_mobile != blank %}
+            {% assign img_url = section.settings.image_mobile | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+            <div class="rimage-outer-wrapper rimage-background mobile-only" data-lazy-bg="{{ img_url }}">
+              {%- if section.settings.height == 'natural' -%}
+                <div class="rimage-wrapper lazyload--placeholder" style="padding-top:{{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%"></div>
+              {%- endif -%}
+              <noscript>
+                <div class="rimage-wrapper" style="padding-top:{{ 1 | divided_by: section.settings.image.aspect_ratio | times: 100 }}%">
+                  <img src="{{ section.settings.image | img_url: '1024x1024' }}" alt="{{ section.settings.image.alt | escape }}" class="rimage__image">
+                </div>
+              </noscript>
+            </div>
+          {% endif %}
         {% endif %}
 
         {%- if show_overlay_text -%}
@@ -99,6 +118,12 @@
                     {{ section.settings.button2_label | escape }}
                       {% if section.settings.button2_link != blank %}</a>{% else %}</span>{% endif %}
                   {% endif %}
+                  {% if section.settings.button3_label != blank %}
+                    {% if section.settings.button3_link != blank %}<a href="{{ section.settings.button3_link.url }}" {% else %}<span{% endif %}
+                    class="{% if section.settings.button_style == 'link' %}link-display {% else %}btn {% if section.settings.button_style == 'secondary' %}btn--secondary{% elsif section.settings.button_style == 'overlay' %}alt btn-overlay{% endif %}{% endif %}">
+                    {{ section.settings.button3_label | escape }}
+                      {% if section.settings.button3_link != blank %}</a>{% else %}</span>{% endif %}
+                  {% endif %}
                 </div>
               {%- endif -%}
             </div>
@@ -115,6 +140,11 @@
     "name": "Image with text overlay",
     "settings": [
       {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading"
+      },
+      {
         "type": "header",
         "content": "Image"
       },
@@ -125,9 +155,59 @@
         "info": "2048 x 1024px recommended"
       },
       {
+        "type": "image_picker",
+        "id": "image_mobile",
+        "label": "Image mobile"
+      },
+      {
         "type": "url",
         "id": "image_link",
         "label": "Image link"
+      },
+      {
+        "type": "select",
+        "id": "image_position",
+        "label": "Image alignment",
+        "default": "center center",
+        "info": "Used to keep the subject of your image in view",
+        "options": [
+          {
+            "value": "top left",
+            "label": "Top left"
+          },
+          {
+            "value": "top center",
+            "label": "Top center"
+          },
+          {
+            "value": "top right",
+            "label": "Top right"
+          },
+          {
+            "value": "center left",
+            "label": "Middle left"
+          },
+          {
+            "value": "center center",
+            "label": "Middle center"
+          },
+          {
+            "value": "center right",
+            "label": "Middle right"
+          },
+          {
+            "value": "bottom left",
+            "label": "Bottom left"
+          },
+          {
+            "value": "bottom center",
+            "label": "Bottom center"
+          },
+          {
+            "value": "bottom right",
+            "label": "Bottom right"
+          }
+        ]
       },
       {
         "type": "radio",
@@ -228,6 +308,16 @@
         "type": "url",
         "id": "button2_link",
         "label": "Button 2 link"
+      },
+      {
+        "type": "text",
+        "id": "button3_label",
+        "label": "Button 3"
+      },
+      {
+        "type": "url",
+        "id": "button3_link",
+        "label": "Button 3 link"
       },
       {
         "type": "select",

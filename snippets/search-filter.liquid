@@ -401,7 +401,7 @@
             {%- endfor -%}
           </div>
         {% elsif mode == "collection" %}
-          <div class="product-list product-grid row grid {% if section.settings.infinite_scroll_enabled %}use-infinite-scroll{% endif %}"
+          <div data-next-url="{{ paginate.next.url }}" class="product-list bss-custom-load-more product-grid row grid {% if section.settings.infinite_scroll_enabled %}use-infinite-scroll{% endif %}"
                data-normheights=".image" data-normheights-inner="img">
             {% capture product_blocks %}
               {%- for product in collection.products -%}

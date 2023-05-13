@@ -12,23 +12,84 @@
   <div id="cart-summary" class="cart-summary {% if cart.item_count == 0 %}cart-summary--empty{% endif%} cart-summary--{{ settings.cart_type }} {{ cart_class }}">
     <div class="cart-summary__inner" aria-live="polite">
       <a class="cart-summary__close toggle-cart-summary" href="#">
-        {% render 'svg-chevron-left' %}
-        <span class="beside-svg">{{ 'layout.cart_summary.continue_shopping' | t }}</span>
+        x
       </a>
 
       <div class="cart-summary__header cart-summary__section">
         <h5 class="cart-summary__title">{{ 'layout.cart_summary.title' | t }}</h5>
-        {% if cart.item_count > 0 %}
-          <div class="cart-summary__cart-links">
-            <div>
-              <a class="cart-summary__cart-link" href="{{ routes.cart_url }}">{{ 'layout.cart_summary.cart' | t }}</a>
-            </div>
-          </div>
-        {% endif %}
       </div>
 
       {% if cart.item_count > 0 %}
+        <div class="cart-summary__item-list-header cart-summary__section cart-accordion-btn-container">
+          <h6 class="cart-summary__item-list-header__title" id="cart-summary-products-header">{{ 'layout.cart_summary.products_header' | t }}</h6>
+          <small class="cart-summary__item-list-header__count">({{ cart.item_count }})</small>
+          <button class="cart-accordion-btn btn plain-text" aria-labelledby="cart-summary-products-header">{% render 'svg-chevron-down' %}</button>
+        </div>
 
+        <div class="cart-summary__item-list">
+          <form class="cart-form cart-summary__section" action="{{ routes.cart_url }}" method="post">
+            {% for item in cart.items %}
+              <div class="cart-summary-item-container" data-product-id="{{ item.id }}">
+                <div class="cart-summary-item">
+                  <div class="cart-summary-item__image">
+                    <a href="{{ item.url }}">
+                      {% render 'responsive-image', image: item.image %}
+                    </a>
+                  </div>
+                  <div class="cart-summary-item__detail">
+                    <div class="cart-summary-item__title-variant">
+                      <p class="bss-vendor">{{ item.vendor }}</p>
+                      <a class="cart-summary-item__title" href="{{ item.url }}">{{ item.product.title }}</a>
+                      {% unless item.product.has_only_default_variant %}<div class="cart-summary-item__variant">{{ item.variant.title }}</div>{% endunless %}
+                      {% if item.selling_plan_allocation %}
+                        <div class="cart-summary-item__variant">{{ item.selling_plan_allocation.selling_plan.name }}</div>
+                      {% endif %}
+                    </div>
+                    <div class="cart-summary-item__price">
+                      {% if item.original_line_price != item.final_line_price %}
+                        <span class="reduced-price cart-summary-item__price-current theme-money">{% render 'price', price: item.final_line_price, disable_currency_code: true %}</span>
+                        <span class="theme-money struck-out-price">{% render 'price', price: item.original_line_price, disable_currency_code: true %}</span>
+                      {% elsif item.variant.compare_at_price != blank and item.variant.price < item.variant.compare_at_price %}
+                        {%- assign total_price = item.variant.compare_at_price | times: item.quantity -%}
+                        <span class="reduced-price cart-summary-item__price-current theme-money">{% render 'price', price: item.final_line_price, disable_currency_code: true %}</span>
+                        <span class="theme-money struck-out-price">{% render 'price', price: total_price, disable_currency_code: true %}</span>
+                      {% else %}
+                        <span class="cart-summary-item__price-current theme-money">{% render 'price', price: item.final_line_price, disable_currency_code: true %}</span>
+                      {% endif %}
+
+                      {% render 'unit-price', variant: item %}
+                    </div>
+
+                    {% if item.line_level_discount_allocations.size > 0 %}
+                      <ul class="cart-discount-list align-right">
+                      {% for discount_allocation in item.line_level_discount_allocations %}
+                        <li class="cart-discount cart-discount--inline cart-discount--flex">
+                          <span class="cart-discount__label">{{ discount_allocation.discount_application.title }}</span>
+                          <span class="cart-discount__amount theme-money">{% render 'price', price: discount_allocation.amount, disable_currency_code: true %}</span>
+                        </li>
+                      {% endfor %}
+                      </ul>
+                    {% endif %}
+                    <div class="cart-summary-item__quantity">
+                      <div class="qty-adjuster qty-adjuster--with-remove qty-adjuster--ajax" data-line-item-id="{{ item.id }}" {% if item.variant.inventory_management != blank and item.variant.inventory_policy == 'deny' %}data-limit="{{ item.variant.inventory_quantity }}"{% endif %}>
+                        <div class="qty-adjuster__inner">
+                          <button class="qty-adjuster__down" aria-label="{{ 'cart.label.decrease' | t | escape }}">{% render 'svg-minus' %}</button>
+                          <input class="qty-adjuster__value" type="text" pattern="[0-9]*" name="updates[]" value="{{ item.quantity }}" aria-label="{{ 'cart.label.quantity' | t | escape }}">
+                          <button class="qty-adjuster__up"
+                              {% if item.variant.inventory_management != blank and item.variant.inventory_policy == 'deny' and item.variant.inventory_quantity == item.quantity %}disabled{% endif %}
+                              aria-label="{{ 'cart.label.increase' | t | escape }}">
+                            {%- render 'svg-plus' -%}
+                          </button>
+                        </div>
+                        <a class="qty-adjuster__remove" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0">{{ 'cart.general.remove' | t }}</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </form>
+        </div>
         <form class="cart-form cart-form--checkout cart-form--checkout--sticky-{{ section.settings.checkout_sticky_form }}" action="{{ routes.cart_url }}" method="post">
           <div class="cart-form--non-stick cart-summary__section">
             <div class="cart-summary__subtotal {% if section.settings.enable_cart_notes == blank and section.settings.show_tax_and_shipping == false %}cart-summary__subtotal--sm-bottom{% endif %}">
@@ -83,7 +144,7 @@
               <a class="btn wide btn--secondary outline btn--empty-cart" href="{{ routes.cart_clear_url }}">{{ 'layout.cart_summary.empty_cart' | t }}</a>
             {% endif %}
           </div>
-
+          
           <div class="cart-summary__buttons cart-summary__section border-bottom">
             {% if section.settings.checkout_goes_to_cart %}
               <a href="{{ routes.cart_url }}" class="btn wide">
@@ -103,77 +164,14 @@
               </div>
             {% endif %}
           </div>
-        </form>
-
-        <div class="cart-summary__item-list-header cart-summary__section cart-accordion-btn-container">
-          <h6 class="cart-summary__item-list-header__title" id="cart-summary-products-header">{{ 'layout.cart_summary.products_header' | t }}</h6>
-          <small class="cart-summary__item-list-header__count">({{ cart.item_count }})</small>
-          <button class="cart-accordion-btn btn plain-text" aria-labelledby="cart-summary-products-header">{% render 'svg-chevron-down' %}</button>
-        </div>
-
-        <div class="cart-summary__item-list">
-          <form class="cart-form cart-summary__section" action="{{ routes.cart_url }}" method="post">
-            {% for item in cart.items %}
-              <div class="cart-summary-item-container" data-product-id="{{ item.id }}">
-                <div class="cart-summary-item">
-                  <div class="cart-summary-item__image">
-                    <a href="{{ item.url }}">
-                      {% render 'responsive-image', image: item.image %}
-                    </a>
-                  </div>
-                  <div class="cart-summary-item__detail">
-                    <div class="cart-summary-item__title-variant">
-                      <a class="cart-summary-item__title" href="{{ item.url }}">{{ item.product.title }}</a>
-                      {% unless item.product.has_only_default_variant %}<div class="cart-summary-item__variant">{{ item.variant.title }}</div>{% endunless %}
-                      {% if item.selling_plan_allocation %}
-                        <div class="cart-summary-item__variant">{{ item.selling_plan_allocation.selling_plan.name }}</div>
-                      {% endif %}
-                    </div>
-                    <div class="cart-summary-item__price">
-                      {% if item.original_line_price != item.final_line_price %}
-                        <span class="reduced-price cart-summary-item__price-current theme-money">{% render 'price', price: item.final_line_price, disable_currency_code: true %}</span>
-                        <span class="theme-money struck-out-price">{% render 'price', price: item.original_line_price, disable_currency_code: true %}</span>
-                      {% elsif item.variant.compare_at_price != blank and item.variant.price < item.variant.compare_at_price %}
-                        <span class="reduced-price cart-summary-item__price-current theme-money">{% render 'price', price: item.final_line_price, disable_currency_code: true %}</span>
-                        {%- assign total_price = item.variant.compare_at_price | times: item.quantity -%}
-                        <span class="theme-money struck-out-price">{% render 'price', price: total_price, disable_currency_code: true %}</span>
-                      {% else %}
-                        <span class="cart-summary-item__price-current theme-money">{% render 'price', price: item.final_line_price, disable_currency_code: true %}</span>
-                      {% endif %}
-
-                      {% render 'unit-price', variant: item %}
-                    </div>
-
-                    {% if item.line_level_discount_allocations.size > 0 %}
-                      <ul class="cart-discount-list align-right">
-                      {% for discount_allocation in item.line_level_discount_allocations %}
-                        <li class="cart-discount cart-discount--inline cart-discount--flex">
-                          <span class="cart-discount__label">{{ discount_allocation.discount_application.title }}</span>
-                          <span class="cart-discount__amount theme-money">{% render 'price', price: discount_allocation.amount, disable_currency_code: true %}</span>
-                        </li>
-                      {% endfor %}
-                      </ul>
-                    {% endif %}
-                    <div class="cart-summary-item__quantity">
-                      <div class="qty-adjuster qty-adjuster--with-remove qty-adjuster--ajax" data-line-item-id="{{ item.id }}" {% if item.variant.inventory_management != blank and item.variant.inventory_policy == 'deny' %}data-limit="{{ item.variant.inventory_quantity }}"{% endif %}>
-                        <div class="qty-adjuster__inner">
-                          <button class="qty-adjuster__down" aria-label="{{ 'cart.label.decrease' | t | escape }}">{% render 'svg-minus' %}</button>
-                          <input class="qty-adjuster__value" type="text" pattern="[0-9]*" name="updates[]" value="{{ item.quantity }}" aria-label="{{ 'cart.label.quantity' | t | escape }}">
-                          <button class="qty-adjuster__up"
-                              {% if item.variant.inventory_management != blank and item.variant.inventory_policy == 'deny' and item.variant.inventory_quantity == item.quantity %}disabled{% endif %}
-                              aria-label="{{ 'cart.label.increase' | t | escape }}">
-                            {%- render 'svg-plus' -%}
-                          </button>
-                        </div>
-                        <a class="qty-adjuster__remove" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0">{{ 'cart.general.remove' | t }}</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          {% if cart.item_count > 0 %}
+            <div class="cart-summary__cart-links">
+              <div>
+                <a class="cart-summary__cart-link" href="{{ routes.cart_url }}">{{ 'layout.cart_summary.cart' | t }}</a>
               </div>
-            {% endfor %}
-          </form>
-        </div>
+            </div>
+          {% endif %}
+        </form>
       {% else %}
         <div class="cart-summary__empty">
           <div class="cart-summary__section">
@@ -254,8 +252,8 @@
                               {% endif %}
 
                               {% if promo_product.compare_at_price > promo_product.price %}
-                                <span class="reduced-price cart-summary-item__price-current theme-money">{% render 'price', price: promo_product.price, disable_currency_code: true %}</span>
                                 <span class="struck-out-price theme-money">{% render 'price', price: promo_product.compare_at_price, disable_currency_code: true %}</span>
+                                <span class="reduced-price cart-summary-item__price-current theme-money">{% render 'price', price: promo_product.price, disable_currency_code: true %}</span>
                               {% else %}
                                 <span class="cart-summary-item__price-current theme-money">{% render 'price', price: promo_product.price, disable_currency_code: true %}</span>
                               {% endif %}
@@ -328,6 +326,7 @@
           </div>
         </div>
       {% endif %}
+    <div class="bss-custom-hotline">HOTLINE: 1900 9999</div>
     </div>
     <script type="application/json" id="LimitedCartJson">
       {

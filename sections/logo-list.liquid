@@ -1,10 +1,73 @@
 <section id="section-id-{{ section.id }}" class="section-logo-list section {% if section.settings.use_alt_bg %}use-alt-bg full-width-section{% endif %}" data-section-type="logo-list">
+  {% assign img_url = section.settings.background_image | img_url: '1024x1024' %}
+  {% assign img_url_mobile = section.settings.background_image_mobile | img_url: '1024x1024' %}
   {%- style -%}
     #section-id-{{ section.id }} .logo-list__logo-image {
       opacity: {{ section.settings.image_opacity }}%;
     }
     #section-id-{{ section.id }} .logo-list__link:hover .logo-list__logo-image {
       opacity: {{ section.settings.image_opacity | times: 1.2 | at_most: 100 }}%;
+    }
+    @media only screen and (min-width: 768px) {
+      .bss-logo-list-custom {
+        background-image:url({{ img_url }});
+        padding-bottom: 30px;
+      }
+      .logo-list-container .custom-heading h2 {
+          font-size: 60px;
+          margin-bottom: 0px;
+          color: white;
+          line-height: 1em;
+      }
+      .logo-list-container .custom-heading {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 40px;
+      }
+      .logo-list-container .sub-head {
+          mix-blend-mode: screen;
+          font-size: 40px;
+          background: white;
+          margin: 0px;
+          font-weight: 800;
+          line-height:1em;
+          margin-top: -10px;
+          box-shadow: rgba(0, 0, 0, 0.4) 0px 30px 90px;
+      }
+      .logo-list-container p {
+          margin: 0px;
+      }
+    }
+    @media only screen and (max-width: 768px) {
+      .relative {
+        background-image:url({{ img_url_mobile }})
+      }
+      .logo-list-container .custom-heading h2 {
+          font-size: 45px;
+          margin-bottom: 0px;
+          color: white;
+          line-height: 1em;
+      }
+      .logo-list-container .custom-heading {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 20px;
+      }
+      .logo-list-container .sub-head {
+          mix-blend-mode: screen;
+          font-size: 30px;
+          background: white;
+          margin: 0px;
+          font-weight: 800;
+          line-height:1em;
+          margin-top: -10px;
+          box-shadow: rgba(0, 0, 0, 0.4) 0px 30px 90px;
+      }
+      .logo-list-container p {
+          margin: 0px;
+      }   
     }
     {%- for block in section.blocks -%}
       #section-id-{{ section.id }} .logo-list__logo-{{ forloop.index }} .logo-list__logo-image {
@@ -33,9 +96,17 @@
         assign bg_color_to = bg_color | color_modify: 'alpha', 0
       -%}
 
-      <div class="cc-carousel-container logo-list-container{% if section.settings.layout == "carousel_on_mobile" %} cc-carousel-container--on-mobile{% endif %}{% if section.settings.layout contains "carousel" %} cc-carousel-mobile--no-scrollbar{% endif %}
+      <div class="cc-carousel-container bss-logo-list-custom logo-list-container{% if section.settings.layout == "carousel_on_mobile" %} cc-carousel-container--on-mobile{% endif %}{% if section.settings.layout contains "carousel" %} cc-carousel-mobile--no-scrollbar{% endif %}
         {% unless section.settings.layout contains "carousel" %}not-a-carousel{% endunless %}"
            style="--bg-color-from: {{ bg_color_from }};--bg-color-to: {{ bg_color_to }};">
+        {% if section.settings.heading != blank %}
+          <div class="custom-heading">
+            <h2>{{ section.settings.heading }} </h2>
+            {% if section.settings.sub_heading != blank %}
+              <div class="sub-head"><p>{{ section.settings.sub_heading }}</p></div>
+            {% endif %}
+          </div>
+        {% endif %}
         <div class="logo-list logo-list--count-{{ section.blocks.size }}
           {% if section.settings.layout == "carousel" %}cc-carousel{% endif %}
           {% if section.settings.layout == "carousel_on_mobile" %}cc-carousel-mobile{% endif %}">
@@ -82,6 +153,11 @@
             {%- endfor -%}
           {% endif %}
         </div>
+        {% if section.settings.show_button %}
+          <div class="bss-logo-list-btn">
+            <a href="{{ section.settings.button_link }}">{{ section.settings.button_text }}</a>
+          </div>
+        {% endif %}
       </div>
     </div>
 
@@ -106,8 +182,47 @@
     {
       "type": "text",
       "id": "title",
-      "label": "Heading",
+      "label": "Section heading",
       "default": "Logo list"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "TOP BRAND"
+    },
+    {
+      "type": "text",
+      "id": "sub_heading",
+      "label": "Sub heading",
+      "default": "UNLIMITED SPORTS"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_mobile",
+      "label": "Background image mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "View all"
+    },
+    {
+      "type": "text",
+      "id": "button_link",
+      "label": "Button link"
     },
     {
       "type": "select",

@@ -1,16 +1,25 @@
 <!doctype html>
 <html class="no-js" lang="{{ request.locale.iso_code }}">
 <head>
-  <!-- Canopy 5.0.0 -->
+   <!-- Added by AVADA Upsells -->
+   {% include 'avada-upsells-app' %}
+   <!-- /Added by AVADA Upsells -->
+ 
+  
+
+
+{% render 'pagefly-head' %}
+  <!-- Canopy 4.3.1 -->
 
   {% render 'head-tag' %}
 
   <meta name="theme-color" content="{{ settings.feature_col }}">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
   <title>
     {{ page_title }}{% if current_tags %} &ndash; {{ 'general.meta.tagged' | t }} "{{ current_tags | join: ', ' }}"{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
   </title>
-
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js" defer="defer"></script>
   {% render 'social-meta-tags' %}
 
   {%- liquid
@@ -38,6 +47,8 @@
   </style>
 
   {{ 'styles.css' | asset_url | stylesheet_tag: preload: true }}
+
+  
 
   <script>
     document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
@@ -149,7 +160,25 @@
   {%- endif -%}
 
   {{ content_for_header }}
+{{ 'bss-common-style.css' | asset_url | stylesheet_tag }}  
+{% if request.path contains '/products/' %}
+ {{ 'bss-product-style.css' | asset_url | stylesheet_tag }} 
+{% else %}
+  {{ 'bss-quickview-style.css' | asset_url | stylesheet_tag }} 
+{% endif %}
+
+{% include 'bss-store-locator-popup' %}
+                {% include 'bss-store-locator-header' %}
+                
+                      {% include 'bss-product-labels-configs' %}
+  
+                        {% if content_for_header contains 'bss-b2b-cp' %}{% include 'bss-b2b-header' %}{% endif %}
+{% if request.path contains '/products/' %}
+  {% include 'kiwiSizing' %}
+{% endif %}
+ <script src="{{ 'bss-theme.js' | asset_url }}" defer="defer"></script>
 </head>
+                 
 
 {%- assign homepage_divider_col_opacity = settings.homepage_divider_col | color_extract: 'alpha' -%}
 <body class="template-{{ template.name }} {% if template.suffix != blank %}template-sfx-{{ template.suffix }}{% endif %} {% if template.directory != blank %}template-dir-{{ template.directory }}{% endif %}"
@@ -174,6 +203,9 @@
       {% section 'header' %}
 
       <main id="content">
+        {% if template.name != "index" and template.name != "cart" %}
+          {% render 'breadcrumb' %} 
+        {% endif %}
         {{ content_for_layout }}
       </main>
     </div><!-- /#page-wrap-content -->
@@ -350,5 +382,21 @@
 <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
 
 {% render 'body-end-tag' %}
-</body>
+
+<!-- **BEGIN** Hextom TMS Translator // Main Include - DO NOT MODIFY -->
+    <script src="{{ 'tms-translator.js' | asset_url }}" defer="defer"></script>
+    <!-- **END** Hextom TMS Translator // Main Include - DO NOT MODIFY -->
+        
+        
+        
+{% include 'uploadkit' %}
+{% render 'boost-sd-fallback' %}
+{% include 'globo.preorder.custom' %}
+{% if content_for_header contains 'product_label' %}{% include 'bss-product-label-js' %}{% include 'bss-label-style-css' %}{% include 'bss-product-label-fonts' %}{% endif %}
+{% if content_for_header contains 'bss-b2b-cp' %}{% include 'bss-b2b-jquery-341-js' %}{% include 'bss-b2b-js' %}{% endif %}
+{% if content_for_header contains 'store-locator-api.bsscommerce.com' %}{% include 'bss-store-locator-js-liquid' %}{% endif %}
+<div class="custom-back-to-top" style="position: fixed; bottom: 20px; right: 20px; z-index: 5;">
+  <a class="hash-link" href="#page-wrap-content">{% render 'back-to-top' %}</a>
+</div>
+{% render "sticky-bottom-navbar" %}</body>
 </html>

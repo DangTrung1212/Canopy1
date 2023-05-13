@@ -1,0 +1,20 @@
+<script>
+window.AVADA_UPSELL = window.AVADA_UPSELL || {};
+window.AVADA_UPSELL.shopId = '5zKcNSgXAC90jwSxlv3F';
+window.AVADA_UPSELL.status = false;
+window.AVADA_UPSELL={{shop.metafields.avada_upsell | json}}
+window.AVADA_UPSELL.product = {
+  id: {{ product.id|json }},
+  variants: {{ product.variants|json }},
+  selectedVariant: {{ product.selected_variant.id|json }},
+  collections: {{ product.collections|map:'title'|json }},
+  collectionId: {{ product.collections|map:'id'|json }},
+};
+window.AVADA_UPSELL.cart = {cartItems: {{cart.items |json}}};
+window.AVADA_UPSELL.customer = {
+  id: {{ customer.id | json }},
+  email: {{ customer.email | json }},
+  first_name: {{ customer.first_name | json }},
+  last_name: {{ customer.last_name | json }},
+};
+ </script>

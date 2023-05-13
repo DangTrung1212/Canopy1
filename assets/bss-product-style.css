@@ -1,0 +1,188 @@
+.product-gallery .thumbnails {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.breadcrumbs {
+  margin: 0px;
+}
+.breadcrumbs > a {
+  font-size: 13px!important;
+}
+.product-gallery .thumbnails .slick-list {
+    width: 90%;
+}
+.product-gallery .thumbnails .slick-prev {
+    margin-left: 0;
+    left: 0;
+}
+.product-gallery .thumbnails .slick-next {
+    margin-right: 0;
+    right: 0;
+}
+.custom-border-bottom {
+    border-bottom: 2px solid #000;
+}
+.bss-custom-label-mobile,
+.product-detail-accordion {
+    display: none;
+}
+.product-form .payment-and-quantity {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    grid-gap: 10px;
+}
+.quantity {
+    margin-bottom: 0 !important;
+    grid-area: 1/1 / span 1 / span 2;
+}
+.product-form .payment-and-quantity--buttons-active .shopify-payment-button {
+    grid-area: 2/1 / span 1 / span 2;
+}
+.product-form .payment-and-quantity--buttons-active .payment-and-quantity__add {
+    grid-area: 2/3 / span 1 / span 2;
+}
+.shopify-payment-button__button {
+    width: 100% !important;
+}
+.qty-adjuster {
+    height: auto !important;
+}
+.bss-custom-label {
+    display: block;
+}
+@media only screen and (max-width: 600px) {
+    .product-slideshow .slick-prev {
+      left: 0px;
+    }
+    .product-slideshow .slick-next {
+      right: 0px;
+    }
+    .product-gallery {
+      padding: 0px;
+    }
+    .breadcrumbs {
+      padding: 5px!important;
+      text-align: center;
+    }
+    .breadcrumbs > a {
+      font-size: 11px!important;
+    }
+    .breadcrumb-delimeter:not(:last-child):after {
+      margin: 0px!important;
+    }
+    .product-gallery .thumbnails .slick-prev {
+        margin-left: -15px;
+        left: 0;
+    }
+    .product-gallery .thumbnails .slick-next {
+        margin-right: -15px;
+        right: 0;
+    }
+    .product-details .product-detail__gap-lg {
+        padding-top: 5px;
+    }
+    .bss-custom-label-mobile {
+        display: block;
+        font-weight: 600;
+        color: #12283e;
+    }
+    .bss-custom-label {
+        display: none;
+    }
+    .product-detail-accordion {
+        display: block !important;
+    }
+    .product-form .payment-and-quantity {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+        grid-gap: 5px;
+    }
+    .product-form .payment-and-quantity--buttons-active .quantity {
+        width: auto !important;
+    }
+    .quantity {
+        margin-bottom: 0 !important;
+        grid-area: 1/1 / span 1 / span 2;
+    }
+    .product-form .payment-and-quantity--buttons-active .shopify-payment-button {
+        grid-area: 2/1 / span 1 / span 5;
+    }
+    .product-form .payment-and-quantity--buttons-active .payment-and-quantity__add {
+        grid-area: 1/3 / span 1 / span 3;
+    }
+}
+.bss-custom-product-atc {
+    display: flex;
+    gap: 15px;
+}
+.qty-adjuster__inner .qty-adjuster__down,
+.qty-adjuster__inner .qty-adjuster__up {
+    background-color: transparent;
+    color: #000;
+}
+.qty-adjuster__inner {
+    border: 1px solid #b7b7b7;
+    box-shadow: none;
+}
+.product-form .shopify-payment-button__button--unbranded {
+    background-color: #12283e;
+    color: #78e61e;
+    font-weight: 700;
+}
+.product-form .payment-and-quantity--buttons-active .payment-and-quantity__add .product-add {
+    font-weight: 700;
+    color: #13283f;
+    border: 2px solid #b7b7b7;
+}
+.bss-custom-product-form__input input {
+    clip: rect(0, 0, 0, 0);
+    overflow: hidden;
+    position: absolute;
+    height: 1px;
+    width: 1px;
+}
+.bss-custom-product-form__input {
+    display: flex;
+    flex-wrap: wrap;
+    border: none;
+    padding: 10px 0 0;
+}
+.bss-custom-product-form__input input:checked + label {
+    opacity: 1 !important;
+    font-weight: 700;
+}
+.bss-custom-product-form__input label {
+    padding: 5px 15px;
+    opacity: 0.5;
+    font-weight: 600;
+    border: 0.7px solid #797979;
+    margin-right: 10px;
+}
+.pretty-select {
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    display: block;
+}
+.quantity > label,
+.selector-wrapper > label {
+    font-weight: 600;
+    color: #12283e;
+}
+.bss-tabs-wrapper {
+    margin-top: 40px;
+}
+.tabs-discription {
+    border-bottom: 1px solid #d3d3d3;
+}
+.tabs-discription li {
+    padding-bottom: 10px;
+}
+.tabs-discription a {
+    opacity: 0.5;
+    font-weight: 600;
+}
+.active_2 {
+    opacity: 1 !important;
+}

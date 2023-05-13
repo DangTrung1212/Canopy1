@@ -33,11 +33,10 @@
         {% if section.settings.image %}
           {% assign img_url = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
           <div class="map-section__image map-section__image--{{ section.id }} supports-js"
-               data-lazy-bg="{{ img_url }}"
-               style="background-position: {{ section.settings.image.presentation.focal_point }}">
+               data-lazy-bg="{{ img_url }}">
           </div>
           <noscript>
-            <div class="map-section__image  map-section__image--{{ section.id }}" style="background-image: url({{ section.settings.image | img_url: '400x400'}}); background-position: {{ section.settings.image.presentation.focal_point }};"></div>
+            <div class="map-section__image  map-section__image--{{ section.id }}" style="background-image: url({{ section.settings.image | img_url: '400x400'}});"></div>
           </noscript>
         {% else %}
           <div class="map-section__placeholder placeholder-image">

@@ -214,7 +214,7 @@
         {% if show_vendor %}
           <div class="vendor">{{ product.vendor }}</div>
         {% endif %}
-        {{ product.title }}
+        <span class="custom-product-title">{{ product.title }}</span>
       </a>
 
       {% if settings.prod_block_layout != "beside" and settings.product_grid_show_reviews and product.metafields.reviews.rating_count != blank and product.metafields.reviews.rating_count > 0 %}

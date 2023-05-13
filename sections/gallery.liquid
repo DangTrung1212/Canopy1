@@ -13,6 +13,22 @@
       }
     {% endif %}
 
+    {% for block in section.blocks %}
+      {% if block.settings.video == blank %}
+        #section-id-{{ section.id }} .gallery__item-{{ forloop.index }} .gallery__image {
+          background-position: {{ block.settings.image_position }};
+        }
+      {% else %}
+        #section-id-{{ section.id }} .gallery__item-{{ forloop.index }} .video-container__fallback {
+          background-position: {{ block.settings.image_position }};
+        }
+
+        #section-id-{{ section.id }} .gallery__item-{{ forloop.index }} video {
+          object-position: {{ block.settings.image_position }};
+        }
+      {% endif %}
+    {% endfor %}
+
     @media (min-width: 768px) {
       #section-id-{{ section.id }} .gallery__item {
         height: {{ section.settings.desktop_image_height }}px;
@@ -80,21 +96,21 @@
 
             {%- unless block.settings.link == blank or block.settings.text contains '</a>' -%}<a class="image-overlay__image-link" href="{{ block.settings.link }}">{%- endunless -%}
 
-            {%- if block.settings.image == blank and block.settings.video_shopify == blank and block.settings.video_external == blank -%}
+            {%- if block.settings.image2 == blank and block.settings.video == blank -%}
               <div class="gallery__image placeholder-image {% if show_overlay_text %}dark{% endif %}">
                 {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
               </div>
-            {%- elsif block.settings.video_shopify != blank or block.settings.video_external != blank -%}
-              {% render 'inline-video', video_shopify: block.settings.video_shopify, video_external: block.settings.video_external, image: block.settings.image %}
-            {%- elsif block.settings.image != blank -%}
+            {%- elsif block.settings.video == blank -%}
               {% assign img_url = block.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
-              <div class="gallery__image rimage-outer-wrapper rimage-background" data-lazy-bg="{{ img_url }}" style="background-position: {{ block.settings.image.presentation.focal_point }}">
+              <div class="gallery__image rimage-outer-wrapper rimage-background" data-lazy-bg="{{ block.settings.image2 }}">
                 <noscript>
                   <div class="rimage-wrapper" style="padding-top:{{ 1 | divided_by: block.settings.image.aspect_ratio | times: 100 }}%">
-                    <img src="{{ block.settings.image | img_url: '1024x1024' }}" alt="{{ block.settings.image.alt | escape }}" class="rimage__image">
+                    <img src="{{ block.settings.image2 | img_url: '1024x1024' }}" alt="{{ block.settings.image.alt | escape }}" class="rimage__image">
                   </div>
                 </noscript>
               </div>
+            {%- else -%}
+              {% render 'inline-video', video: block.settings.video, image: block.settings.image2 %}
             {%- endif -%}
 
             {%- if show_overlay_text -%}
@@ -103,13 +119,13 @@
               <div class="inner {% if block.settings.text_alignment contains "left" or  block.settings.text_alignment contains "right" %}container{% endif %}">
                 {%- if block.settings.subheading != blank -%}
                   <div class="feature-subheader">
-                    {{ block.settings.subheading | escape }}
+                    {{ block.settings.subheading | escape }} 
                   </div>
                 {% endif %}
 
                 {%- if block.settings.title != blank -%}
                   <h2 class="line-1 {% if section.settings.title_size >= 86 %}line-1--large{% endif %}">
-                    {{ block.settings.title | newline_to_br }}
+                    {{ block.settings.title | newline_to_br }} {% if section.settings.enable_arrow %} <span class="bss-arrow">{% render "arrow" %}</span> {% endif %}
                   </h2>
                 {%- endif -%}
 
@@ -147,6 +163,10 @@
         {%- endfor -%}
       </div>
     </div>
+  
+    {% if section.settings.enable_mobile_button %}
+      <div class="custom-gallery-btn mobile-only"><a class="bss-more-link" href="{{ section.settings.mobile_button_link }}">{{ section.settings.mobile_button }}</a></div>
+    {% endif %}
   </div>
 </section>
 
@@ -160,6 +180,12 @@
       "label": "Heading"
     },
     {
+      "type": "checkbox",
+      "id": "enable_arrow",
+      "label": "Enable heading icon",
+      "default": true
+    },
+    {
       "type": "range",
       "id": "grid",
       "min": 1,
@@ -167,6 +193,23 @@
       "step": 1,
       "label": "Maximum columns per row",
       "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mobile_button",
+      "label": "Enabel mobile button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "mobile_button",
+      "label": "Mobile button",
+      "default": "VIEW ALL"
+    },
+    {
+      "type": "text",
+      "id": "mobile_button_link",
+      "label": "Mobile button link"
     },
     {
       "type": "range",
@@ -325,22 +368,65 @@
           "content": "Media"
         },
         {
-          "id": "image",
           "type": "image_picker",
-          "label": "Image",
-          "info": "If coupled with a video, it will show while the video is loading, or if it cannot autoplay. Required for External videos."
+          "id": "image",
+          "label": "Image"
         },
         {
-          "id": "video_shopify",
-          "type": "video",
-          "label": "Video upload",
-          "info": "Hosted by Shopify. Replaces External video if both are set."
-        },
-        {
-          "id": "video_external",
           "type": "text",
-          "label": "External video",
-          "info": "Supports YouTube and Vimeo."
+          "id": "image2",
+          "label": "Image link"
+        },
+        {
+          "id": "video",
+          "type": "text",
+          "label": "Video URL",
+          "info": "A URL to an MP4 video. It's recommended to pick an image also as it will be shown while the video loads."
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Image alignment",
+          "info": "Used to keep the subject of your image/video in view",
+          "default": "center center",
+          "options": [
+            {
+              "value": "top left",
+              "label": "Top left"
+            },
+            {
+              "value": "top center",
+              "label": "Top center"
+            },
+            {
+              "value": "top right",
+              "label": "Top right"
+            },
+            {
+              "value": "center left",
+              "label": "Middle left"
+            },
+            {
+              "value": "center center",
+              "label": "Middle center"
+            },
+            {
+              "value": "center right",
+              "label": "Middle right"
+            },
+            {
+              "value": "bottom left",
+              "label": "Bottom left"
+            },
+            {
+              "value": "bottom center",
+              "label": "Bottom center"
+            },
+            {
+              "value": "bottom right",
+              "label": "Bottom right"
+            }
+          ]
         },
         {
           "type": "checkbox",
